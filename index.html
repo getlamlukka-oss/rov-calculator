@@ -1,283 +1,133 @@
-// ==========================
-// ROV CREATOR CALCULATOR PRO
-// ==========================
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ROV Creator Calculator Pro</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#0f172a;color:#fff}
+.wrap{max-width:1200px;margin:auto;padding:20px}
+.card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:16px;margin:10px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+input,button{width:100%;padding:14px;border-radius:14px;border:none}
+button{cursor:pointer;background:linear-gradient(90deg,#7c3aed,#2563eb);color:#fff;font-weight:bold}
+.kpi{font-size:28px;font-weight:bold}
+canvas{background:#fff;border-radius:12px;width:100%;max-width:600px}
+small{opacity:.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>ROV Creator Calculator Pro</h1>
+<p>คำนวณเป้าหมาย Creator Program แบบอัตโนมัติ</p>
 
-// POINT => TOKEN
+<div class="card">
+<label>คะแนนเป้าหมาย (Points)</label>
+<input id="points" type="number" placeholder="1000">
+<br><br>
+<button onclick="calc()">คำนวณ</button>
+</div>
 
-const POINTS = {
-  100: 80,
-  300: 210,
-  500: 360,
-  1000: 720,
-  1500: 1090,
-  2000: 1430
-};
+<div class="grid">
+<div class="card"><div>โทเค็นที่ต้องใช้</div><div id="t1" class="kpi">0</div></div>
+<div class="card"><div>รางวัลสะสมทั้งหมด</div><div id="t2" class="kpi">240</div></div>
+<div class="card"><div>โทเค็นที่ต้องทำเพิ่ม</div><div id="t3" class="kpi">0</div></div>
+<div class="card"><div>คะแนนเป้าหมาย</div><div id="t4" class="kpi">0</div></div>
+</div>
 
-// ==========================
-// ACHIEVEMENT
-// รับได้ครั้งเดียว
-// ==========================
+<div class="card">
+<h3>เกณฑ์ที่ต้องทำตามสูตร V5</h3>
+<div id="result"></div>
+</div>
 
-const ACHIEVEMENT = {
+<div class="card">
+<h3>Achievement Breakdown</h3>
+<table width="100%">
+<tr><th>Source</th><th>Token</th></tr>
+<tr><td>อัปโหลดคลิป</td><td>40</td></tr>
+<tr><td>ยอดวิวคลิปสูงสุด</td><td>20</td></tr>
+<tr><td>ยอดไลก์คลิปสูงสุด</td><td>15</td></tr>
+<tr><td>ผู้ติดตาม</td><td>15</td></tr>
+<tr><td>TikTok</td><td>10</td></tr>
+<tr><td>RoV Upload</td><td>10</td></tr>
+<tr><td>RoV Mission</td><td>10</td></tr>
+<tr><td>Season Views</td><td>60</td></tr>
+<tr><td>Season Missions</td><td>60</td></tr>
+</table>
+</div>
 
-  tiktok: {
-    name: "ผูก TikTok",
-    token: 10
-  },
+<div class="card">
+<h3>Chart</h3>
+<canvas id="c" width="600" height="300"></canvas>
+</div>
 
-  rovClip: {
-    name: "ลงคลิป #RoV",
-    token: 10
-  },
+<div class="card">
+<button onclick="exportJSON()">Export JSON</button><br><br>
+<button onclick="exportCSV()">Export CSV</button>
+</div>
+</div>
 
-  rovMission: {
-    name: "ทำภารกิจ RoV",
-    token: 10
-  },
+<script>
+const map={100:80,300:210,500:360,1000:720,1500:1090,2000:1430};
+let last={};
 
-  clips: [
-    { target: 1, token: 10 },
-    { target: 2, token: 10 },
-    { target: 5, token: 10 },
-    { target: 10, token: 10 },
-    { target: 15, token: 10 }
-  ],
+function calc(){
+const p=Number(document.getElementById('points').value||0);
+const req=map[p]||0;
+const remain=Math.max(req-240,0);
 
-  vip: [
-    { target: 1, token: 10 },
-    { target: 3, token: 10 },
-    { target: 7, token: 10 },
-    { target: 12, token: 10 }
-  ],
+document.getElementById('t1').textContent=req;
+document.getElementById('t3').textContent=remain;
+document.getElementById('t4').textContent=p;
 
-  follower: [
-    { target: 50, token: 5 },
-    { target: 300, token: 5 },
-    { target: 2000, token: 5 }
-  ],
+const clips=Math.ceil(remain/10);
+const views=clips*2000;
+const likes=Math.ceil(views*0.05);
+const followers=Math.ceil(views/100);
 
-  like: [
-    { target: 10, token: 5 },
-    { target: 50, token: 5 },
-    { target: 100, token: 5 }
-  ],
+document.getElementById('result').innerHTML=`
+<p>จำนวนคลิป: ${clips}</p>
+<p>ภารกิจสะสมซีซั่น: ${Math.ceil(clips/2)}</p>
+<p>วิวสูงสุดต่อคลิป: 2000</p>
+<p>ยอดวิวรวม: ${views}</p>
+<p>ไลก์สูงสุดต่อคลิป: ${likes}</p>
+<p>ผู้ติดตาม: ${followers}</p>
+<p>ภารกิจพิเศษ RoV: 1</p>`;
 
-  view: [
-    { target: 1000, token: 5 },
-    { target: 3000, token: 5 },
-    { target: 10000, token: 5 },
-    { target: 30000, token: 5 }
-  ]
-};
-
-// ==========================
-// MONTHLY
-// รีเซ็ตทุกเดือน
-// ==========================
-
-const MONTHLY = {
-
-  views: [
-    { target: 5000, token: 20 },
-    { target: 20000, token: 20 },
-    { target: 60000, token: 20 }
-  ],
-
-  missions: [
-    { target: 8, token: 20 },
-    { target: 20, token: 20 },
-    { target: 40, token: 20 }
-  ]
-
-};
-
-// ==========================
-// คำนวณ Achievement
-// ==========================
-
-function calculateAchievement(data){
-
-  let token = 0;
-  let unlocked = [];
-
-  // TikTok
-
-  if(data.tiktok){
-    token += 10;
-    unlocked.push("ผูก TikTok");
-  }
-
-  // RoV
-
-  if(data.rovClip){
-    token += 10;
-    unlocked.push("ลงคลิป #RoV");
-  }
-
-  if(data.rovMission){
-    token += 10;
-    unlocked.push("ทำภารกิจ RoV");
-  }
-
-  // Clip
-
-  ACHIEVEMENT.clips.forEach(item => {
-
-    if(data.clips >= item.target){
-
-      token += item.token;
-
-      unlocked.push(
-        `ลง ${item.target} คลิป`
-      );
-
-    }
-
-  });
-
-  // VIP
-
-  ACHIEVEMENT.vip.forEach(item => {
-
-    if(data.vip >= item.target){
-
-      token += item.token;
-
-      unlocked.push(
-        `VIP ${item.target}`
-      );
-
-    }
-
-  });
-
-  // Followers
-
-  ACHIEVEMENT.follower.forEach(item => {
-
-    if(data.followers >= item.target){
-
-      token += item.token;
-
-      unlocked.push(
-        `${item.target} Followers`
-      );
-
-    }
-
-  });
-
-  // Likes
-
-  ACHIEVEMENT.like.forEach(item => {
-
-    if(data.likes >= item.target){
-
-      token += item.token;
-
-      unlocked.push(
-        `${item.target} Likes`
-      );
-
-    }
-
-  });
-
-  // View ต่อคลิป
-
-  ACHIEVEMENT.view.forEach(item => {
-
-    if(data.viewsPerClip >= item.target){
-
-      token += item.token;
-
-      unlocked.push(
-        `${item.target.toLocaleString()} View`
-      );
-
-    }
-
-  });
-
-  return {
-    token,
-    unlocked
-  };
-
+last={target:p,required:req,remaining:remain,clips,views,likes,followers};
+draw(req,240,remain);
+localStorage.setItem("rovcalc",JSON.stringify(last));
 }
 
-// ==========================
-// คำนวณ Monthly
-// ==========================
-
-function calculateMonthly(data){
-
-  let token = 0;
-  let unlocked = [];
-
-  MONTHLY.views.forEach(item => {
-
-    if(data.totalViews >= item.target){
-
-      token += item.token;
-
-      unlocked.push(
-        `${item.target.toLocaleString()} View Monthly`
-      );
-
-    }
-
-  });
-
-  MONTHLY.missions.forEach(item => {
-
-    if(data.monthlyMission >= item.target){
-
-      token += item.token;
-
-      unlocked.push(
-        `${item.target} Mission Monthly`
-      );
-
-    }
-
-  });
-
-  return {
-    token,
-    unlocked
-  };
-
-}
-
-// ==========================
-// Point เป้าหมาย
-// ==========================
-
-function getTargetToken(point){
-
-  return POINTS[point] || 0;
-
-}
-
-// ==========================
-// ตัวอย่าง
-// ==========================
-
-const result = calculateAchievement({
-
-  tiktok:true,
-  rovClip:true,
-  rovMission:true,
-
-  clips:15,
-  vip:12,
-
-  followers:2500,
-  likes:150,
-
-  viewsPerClip:40000
-
+function draw(a,b,c){
+const ctx=document.getElementById('c').getContext('2d');
+ctx.clearRect(0,0,600,300);
+const vals=[a,b,c];
+vals.forEach((v,i)=>{
+ctx.fillStyle=["#7c3aed","#2563eb","#10b981"][i];
+ctx.fillRect(80+i*150,280-v/6,80,v/6);
+ctx.fillText(v,90+i*150,270-v/6);
 });
+}
 
-console.log(result);
+function exportJSON(){
+const blob=new Blob([JSON.stringify(last,null,2)],{type:'application/json'});
+const a=document.createElement('a');
+a.href=URL.createObjectURL(blob);
+a.download='rov_creator.json';
+a.click();
+}
+
+function exportCSV(){
+const rows=[["key","value"]];
+Object.keys(last).forEach(k=>rows.push([k,last[k]]));
+const csv=rows.map(r=>r.join(",")).join("\n");
+const blob=new Blob([csv],{type:'text/csv'});
+const a=document.createElement('a');
+a.href=URL.createObjectURL(blob);
+a.download='rov_creator.csv';
+a.click();
+}
+</script>
+</body>
+</html>
