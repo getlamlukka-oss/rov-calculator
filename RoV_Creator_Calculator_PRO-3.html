@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RoV Creator Calculator PRO</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f3f4f6;padding:20px}
+.card{background:#fff;max-width:800px;margin:auto;padding:20px;border-radius:12px}
+h1{text-align:center}
+input,button{width:100%;padding:12px;margin-top:10px}
+button{background:#2563eb;color:white;border:none;border-radius:8px}
+.result{margin-top:20px;background:#eef;padding:15px;border-radius:8px;white-space:pre-line}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>RoV Creator Calculator PRO</h1>
+<input id="point" type="number" placeholder="ใส่ Point เช่น 500">
+<button onclick="calc()">คำนวณอัตโนมัติ</button>
+<div id="result" class="result"></div>
+</div>
+
+<script>
+const rewardTable={100:80,300:210,500:360,1000:720,1500:1090,2000:1430};
+
+function clipBonus(c){
+ if(c>=15) return 50;
+ if(c>=10) return 40;
+ if(c>=5) return 30;
+ if(c>=2) return 20;
+ if(c>=1) return 10;
+ return 0;
+}
+
+function calc(){
+ let point=parseInt(document.getElementById("point").value);
+ let target=rewardTable[point];
+
+ if(!target){
+   document.getElementById("result").innerText="รองรับเฉพาะ 100,300,500,1000,1500,2000 Point";
+   return;
+ }
+
+ let clips=1;
+
+ while(true){
+   let tokenViews=clips*38; // 40k วิวต่อคลิป = 38 token
+   let totalViews=clips*40000;
+   let missions=clips*4;
+
+   let monthlyViewBonus=60; // 5k+20k+60k รับครั้งเดียว = 60
+   let monthlyMissionBonus=60; // 8+20+40 รับครั้งเดียว = 60
+   let likeBonus=15;
+   let followerBonus=5;
+
+   let total=tokenViews+clipBonus(clips)+monthlyViewBonus+monthlyMissionBonus+likeBonus+followerBonus;
+
+   if(total>=target){
+      document.getElementById("result").innerText =
+`เป้าหมาย ${point} Point
+ต้องใช้ ${target} Token
+
+แผนแนะนำ
+
+จำนวนคลิป: ${clips}
+วิวต่อคลิป: 40,000
+วิวรวม: ${totalViews.toLocaleString()}
+
+โบนัสที่ปลดล็อก
+- โบนัสคลิป: ${clipBonus(clips)}
+- โบนัสวิวรวม: ${monthlyViewBonus}
+- โบนัสภารกิจ: ${monthlyMissionBonus}
+- Like: ${likeBonus}
+- Follower: ${followerBonus}
+
+Token จากวิวคลิป: ${tokenViews}
+
+Token รวมทั้งหมด: ${total}
+
+สถานะ: ถึงเป้าหมาย`;
+      break;
+   }
+
+   clips++;
+   if(clips>500){break;}
+ }
+}
+</script>
+</body>
+</html>
