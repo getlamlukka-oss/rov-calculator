@@ -3,131 +3,63 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ROV Creator Calculator Pro</title>
+<title>CREATOR NEXT GEN - FULL</title>
 <style>
-body{margin:0;font-family:Arial,sans-serif;background:#0f172a;color:#fff}
-.wrap{max-width:1200px;margin:auto;padding:20px}
-.card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:16px;margin:10px 0}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-input,button{width:100%;padding:14px;border-radius:14px;border:none}
-button{cursor:pointer;background:linear-gradient(90deg,#7c3aed,#2563eb);color:#fff;font-weight:bold}
-.kpi{font-size:28px;font-weight:bold}
-canvas{background:#fff;border-radius:12px;width:100%;max-width:600px}
-small{opacity:.8}
+:root{--bg:#0b1020;--card:#121a2f;--text:#fff;--accent:#ff9800}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{padding:20px;background:linear-gradient(135deg,#ff9800,#8e24aa)}
+.wrap{max-width:1200px;margin:auto;padding:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.card{background:var(--card);padding:16px;border-radius:16px}
+input,textarea,select,button{width:100%;padding:10px;margin-top:8px;border-radius:10px;border:0}
+button{background:var(--accent);color:#fff;font-weight:bold}
+.progress{height:16px;background:#333;border-radius:999px;overflow:hidden}
+.bar{height:100%;width:0;background:#22c55e}
 </style>
 </head>
 <body>
+<header><h1>CREATOR NEXT GEN</h1><p>ROV Creator Calculator Pro</p></header>
 <div class="wrap">
-<h1>ROV Creator Calculator Pro</h1>
-<p>คำนวณเป้าหมาย Creator Program แบบอัตโนมัติ</p>
-
-<div class="card">
-<label>คะแนนเป้าหมาย (Points)</label>
-<input id="points" type="number" placeholder="1000">
-<br><br>
-<button onclick="calc()">คำนวณ</button>
-</div>
-
 <div class="grid">
-<div class="card"><div>โทเค็นที่ต้องใช้</div><div id="t1" class="kpi">0</div></div>
-<div class="card"><div>รางวัลสะสมทั้งหมด</div><div id="t2" class="kpi">240</div></div>
-<div class="card"><div>โทเค็นที่ต้องทำเพิ่ม</div><div id="t3" class="kpi">0</div></div>
-<div class="card"><div>คะแนนเป้าหมาย</div><div id="t4" class="kpi">0</div></div>
-</div>
-
 <div class="card">
-<h3>เกณฑ์ที่ต้องทำตามสูตร V5</h3>
-<div id="result"></div>
+<h3>Calculator</h3>
+<input id="currentPoint" type="number" placeholder="Current Point">
+<select id="targetPoint">
+<option>100</option><option>300</option><option>500</option>
+<option>1000</option><option>1500</option><option>2000</option>
+</select>
+<textarea id="views" rows="8" placeholder="1 คลิปต่อ 1 บรรทัด"></textarea>
+<button onclick="calc()">Calculate</button>
 </div>
-
 <div class="card">
-<h3>Achievement Breakdown</h3>
-<table width="100%">
-<tr><th>Source</th><th>Token</th></tr>
-<tr><td>อัปโหลดคลิป</td><td>40</td></tr>
-<tr><td>ยอดวิวคลิปสูงสุด</td><td>20</td></tr>
-<tr><td>ยอดไลก์คลิปสูงสุด</td><td>15</td></tr>
-<tr><td>ผู้ติดตาม</td><td>15</td></tr>
-<tr><td>TikTok</td><td>10</td></tr>
-<tr><td>RoV Upload</td><td>10</td></tr>
-<tr><td>RoV Mission</td><td>10</td></tr>
-<tr><td>Season Views</td><td>60</td></tr>
-<tr><td>Season Missions</td><td>60</td></tr>
-</table>
+<h3>One-Time Rewards</h3>
+<div id="rewards"></div>
 </div>
-
 <div class="card">
-<h3>Chart</h3>
-<canvas id="c" width="600" height="300"></canvas>
-</div>
-
-<div class="card">
-<button onclick="exportJSON()">Export JSON</button><br><br>
-<button onclick="exportCSV()">Export CSV</button>
+<h3>Progress</h3>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<p id="percent">0%</p>
+<div id="summary"></div>
 </div>
 </div>
-
+</div>
 <script>
-const map={100:80,300:210,500:360,1000:720,1500:1090,2000:1430};
-let last={};
-
+const POINTS={100:80,300:210,500:360,1000:720,1500:1090,2000:1430};
+const rewards=[["Upload Clips",40],["Highest Video Views",20],["Highest Video Likes",15],["Followers",15],["Connect TikTok",10],["Upload RoV Clip",10],["RoV Mission",10]];
+document.getElementById("rewards").innerHTML=rewards.map(r=>`<label><input class="rw" type="checkbox" data-token="${r[1]}"> ${r[0]} (+${r[1]})</label><br>`).join("");
+function viewToken(v){let t=0;if(v>=1000)t+=3;if(v>=4000)t+=5;if(v>=15000)t+=10;if(v>=40000)t+=20;return t;}
 function calc(){
-const p=Number(document.getElementById('points').value||0);
-const req=map[p]||0;
-const remain=Math.max(req-240,0);
-
-document.getElementById('t1').textContent=req;
-document.getElementById('t3').textContent=remain;
-document.getElementById('t4').textContent=p;
-
-const clips=Math.ceil(remain/10);
-const views=clips*2000;
-const likes=Math.ceil(views*0.05);
-const followers=Math.ceil(views/100);
-
-document.getElementById('result').innerHTML=`
-<p>จำนวนคลิป: ${clips}</p>
-<p>ภารกิจสะสมซีซั่น: ${Math.ceil(clips/2)}</p>
-<p>วิวสูงสุดต่อคลิป: 2000</p>
-<p>ยอดวิวรวม: ${views}</p>
-<p>ไลก์สูงสุดต่อคลิป: ${likes}</p>
-<p>ผู้ติดตาม: ${followers}</p>
-<p>ภารกิจพิเศษ RoV: 1</p>`;
-
-last={target:p,required:req,remaining:remain,clips,views,likes,followers};
-draw(req,240,remain);
-localStorage.setItem("rovcalc",JSON.stringify(last));
-}
-
-function draw(a,b,c){
-const ctx=document.getElementById('c').getContext('2d');
-ctx.clearRect(0,0,600,300);
-const vals=[a,b,c];
-vals.forEach((v,i)=>{
-ctx.fillStyle=["#7c3aed","#2563eb","#10b981"][i];
-ctx.fillRect(80+i*150,280-v/6,80,v/6);
-ctx.fillText(v,90+i*150,270-v/6);
-});
-}
-
-function exportJSON(){
-const blob=new Blob([JSON.stringify(last,null,2)],{type:'application/json'});
-const a=document.createElement('a');
-a.href=URL.createObjectURL(blob);
-a.download='rov_creator.json';
-a.click();
-}
-
-function exportCSV(){
-const rows=[["key","value"]];
-Object.keys(last).forEach(k=>rows.push([k,last[k]]));
-const csv=rows.map(r=>r.join(",")).join("\n");
-const blob=new Blob([csv],{type:'text/csv'});
-const a=document.createElement('a');
-a.href=URL.createObjectURL(blob);
-a.download='rov_creator.csv';
-a.click();
+ let reward=[...document.querySelectorAll('.rw')].reduce((a,b)=>a+(b.checked?+b.dataset.token:0),0);
+ let vt=0,clips=0;
+ views.value.split(/\n/).forEach(x=>{let v=parseInt(x);if(v>0){clips++;vt+=viewToken(v)}});
+ let req=POINTS[+targetPoint.value]||0;
+ let cur=reward+vt;
+ let rem=Math.max(0,req-cur);
+ let p=req?Math.min(cur/req*100,100):0;
+ bar.style.width=p+'%';
+ percent.textContent=p.toFixed(2)+'%';
+ summary.innerHTML=`Required:${req}<br>Current:${cur}<br>Remaining:${rem}<br>Clips:${clips}`;
+ localStorage.setItem("creator_next_gen_full",JSON.stringify({cp:currentPoint.value,tp:targetPoint.value,views:views.value}));
 }
 </script>
-</body>
-</html>
+</body></html>
