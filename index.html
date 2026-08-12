@@ -2,685 +2,617 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CREATOR NEXT GEN - RoV Creator Calculator Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>CREATOR NEXT GEN · ROV Creator Calculator Pro</title>
     <style>
-        :root {
-            --bg-deep: #160d2b;
-            --bg-card: #28164b;
-            --bg-card-inner: #1e1039;
-            --gold-light: #fff2b2;
-            --gold-main: #fbc02d;
-            --gold-dark: #b78103;
-            --orange-main: #ff7043;
-            --orange-dark: #d84315;
-            --cream-bg: #fffbf0;
-            --cream-text: #fbedd0;
-            --purple-accent: #9c27b0;
-            --purple-glow: rgba(156, 39, 176, 0.4);
-            --gold-glow: rgba(251, 192, 45, 0.35);
-            --text-muted: #bda8df;
-            --border-gold: #e5a93b;
-            --btn-claim: #4caf50;
-            --btn-progress: #ff9800;
-            --btn-locked: #5c5179;
-        }
-
+        /* ===== RESET & BASE ===== */
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Kanit", sans-serif;
-            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Tahoma', system-ui, sans-serif;
         }
 
         body {
-            background-color: var(--bg-deep);
-            color: var(--cream-text);
+            background: #0a0503;
+            background-image:
+                radial-gradient(circle at 20% 20%, #4a2c14 0%, #1f0e06 70%),
+                radial-gradient(circle at 80% 80%, #5a3a1e 0%, #160b07 90%);
             min-height: 100vh;
-            padding-bottom: 50px;
-            background-image: 
-                radial-gradient(circle at 50% 0%, #4a154b 0%, transparent 60%),
-                radial-gradient(circle at 100% 100%, #1f0d3d 0%, transparent 50%);
-            background-attachment: fixed;
-        }
-
-        .container {
-            max-width: 480px;
-            margin: 0 auto;
-            padding: 14px;
-        }
-
-        /* HEADER */
-        .header {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            padding: 12px 16px;
-            background: linear-gradient(180deg, #3d1b6d 0%, #241145 100%);
-            border: 2px solid var(--border-gold);
-            border-radius: 18px;
-            box-shadow: 0 4px 15px var(--gold-glow);
-            margin-bottom: 14px;
+            justify-content: center;
+            padding: 16px 12px 32px;
+            color: #fbeed3;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated glowing orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
+            z-index: 0;
+            animation: float 8s infinite alternate ease-in-out;
+            pointer-events: none;
+        }
+        .orb-1 {
+            width: 180px;
+            height: 180px;
+            background: #f3b33d;
+            top: 20%;
+            left: -5%;
+            animation-duration: 10s;
+        }
+        .orb-2 {
+            width: 220px;
+            height: 220px;
+            background: #a567f0;
+            bottom: 10%;
+            right: -10%;
+            animation-duration: 12s;
+        }
+        .orb-3 {
+            width: 150px;
+            height: 150px;
+            background: #ff7b00;
+            top: 60%;
+            left: 20%;
+            animation-duration: 9s;
+            opacity: 0.3;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-40px) scale(1.2); }
+        }
+
+        .app-container {
+            max-width: 480px;
+            width: 100%;
+            background: rgba(26, 14, 8, 0.92);
+            background: linear-gradient(160deg, #3e2815 0%, #1a0d06 100%);
+            border-radius: 42px 42px 32px 32px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 180, 70, 0.4), inset 0 1px 5px rgba(255, 215, 130, 0.4);
+            padding: 20px 16px 28px;
+            border: 2px solid #ffc44d;
+            position: relative;
+            z-index: 2;
+            backdrop-filter: blur(2px);
+            transition: transform 0.2s;
+        }
+
+        .app-container:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Shine overlay */
+        .app-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+            animation: shine 4s infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+
+        .content-layer {
+            position: relative;
+            z-index: 3;
+        }
+
+        /* ===== HEADER ===== */
+        .header-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.45);
+            border-radius: 100px;
+            padding: 12px 20px;
+            margin-bottom: 18px;
+            border: 1.5px solid #ffd166;
+            box-shadow: 0 0 20px rgba(255, 190, 80, 0.5), inset 0 0 10px rgba(255, 210, 120, 0.3);
+            transition: box-shadow 0.3s;
+        }
+
+        .header-card:hover {
+            box-shadow: 0 0 35px rgba(255, 190, 80, 0.9);
         }
 
         .header-title {
-            font-size: 1.15rem;
+            font-size: 1.4rem;
             font-weight: 900;
-            color: var(--gold-light);
-            text-shadow: 0 0 8px rgba(251, 192, 45, 0.6);
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #ffe9b8, #ffbb4d, #ff8800);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 15px #ffae1a;
         }
 
         .token-badge {
+            background: #3b2312;
+            border: 2px solid #f7c873;
+            border-radius: 40px;
+            padding: 8px 18px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #fff3d1;
+            box-shadow: 0 0 15px #ffb347, inset 0 0 8px rgba(255,215,130,0.6);
             display: flex;
             align-items: center;
-            background: #120824;
-            border: 1.5px solid var(--gold-main);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-weight: 800;
-            color: var(--gold-light);
-            box-shadow: inset 0 0 6px rgba(251, 192, 45, 0.3);
+            gap: 6px;
+            animation: pulse 2s infinite;
         }
 
-        .token-badge .icon {
-            margin-right: 6px;
-            font-size: 1.1rem;
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); box-shadow: 0 0 25px #ffb347; }
+            100% { transform: scale(1); }
         }
 
-        .token-badge .val {
-            font-size: 1.1rem;
-            color: #ffd54f;
+        /* ===== CREATOR STATUS CARD ===== */
+        .status-card {
+            background: linear-gradient(125deg, #4a2e16, #2b1b0e);
+            border-radius: 28px;
+            padding: 18px 18px;
+            margin-bottom: 20px;
+            border: 1px solid #d69e4a;
+            box-shadow: 0 8px 0 #6b471f, 0 12px 30px black, inset 0 0 20px rgba(255,180,70,0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        /* STATUS CARD */
-        .game-card {
-            background: linear-gradient(135deg, #2f1754 0%, #1d0f36 100%);
-            border: 2px solid #5a3294;
-            border-radius: 18px;
-            padding: 16px;
-            margin-bottom: 14px;
-            position: relative;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.4);
-        }
-
-        .game-card-header {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            font-weight: 800;
-            color: var(--gold-main);
-            margin-bottom: 10px;
+        .creator-level {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 6px;
+            font-weight: bold;
+            background: #1a0f06;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 1rem;
+            color: #ffd58c;
+            border: 1px solid #e6a53e;
+            box-shadow: inset 0 2px 5px rgba(255,200,80,0.2);
         }
 
-        .status-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
-            text-align: center;
-        }
-
-        .status-col {
-            background: var(--bg-card-inner);
-            padding: 10px 6px;
-            border-radius: 12px;
-            border: 1px solid #432274;
-        }
-
-        .status-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .status-value {
-            font-size: 1.25rem;
-            font-weight: 900;
-            color: #fff;
-        }
-
-        .status-value.gold {
-            color: #ffd54f;
-            text-shadow: 0 0 8px rgba(255, 213, 79, 0.4);
-        }
-
-        /* TARGET INPUT SECTION */
-        .target-box {
+        .point-display {
             display: flex;
-            gap: 8px;
-            margin-top: 6px;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            background: #0f0804;
+            padding: 12px 18px;
+            border-radius: 24px;
+            border: 1px solid #bc7e34;
+            box-shadow: inset 0 0 10px rgba(255,180,70,0.3);
+        }
+
+        .point-display strong {
+            color: #ffdb8e;
+            text-shadow: 0 0 8px #ffaa33;
+        }
+
+        /* ===== TARGET SECTION ===== */
+        .target-section {
+            background: linear-gradient(145deg, #422a12, #2b1a0d);
+            border-radius: 26px;
+            padding: 20px 16px;
+            margin-bottom: 20px;
+            border: 1px solid #e5a94b;
+            box-shadow: 0 6px 0 #8a581b, 0 10px 25px black, inset 0 0 15px rgba(255,170,70,0.3);
         }
 
         .target-input {
-            flex: 1;
-            background: #110724;
-            border: 2px solid #6b3ba7;
-            border-radius: 12px;
-            padding: 12px 14px;
-            color: #fff;
-            font-size: 1rem;
-            font-weight: 700;
+            width: 100%;
+            background: #1e1108;
+            border: 2px solid #f5b84b;
+            border-radius: 40px;
+            padding: 16px 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #fdebcd;
+            margin-bottom: 15px;
             outline: none;
-            transition: 0.2s border;
+            text-align: center;
+            letter-spacing: 1px;
+            box-shadow: inset 0 0 15px rgba(255,190,80,0.4);
+            transition: 0.3s;
         }
-
         .target-input:focus {
-            border-color: var(--gold-main);
+            border-color: #ffd166;
+            box-shadow: 0 0 25px #ffb347, inset 0 0 10px rgba(255,255,200,0.6);
+            background: #2a190b;
+        }
+        .target-input::placeholder {
+            color: #b99f7c;
+            font-weight: 500;
         }
 
-        .btn-calc {
-            background: linear-gradient(180deg, #ff9800 0%, #e65100 100%);
+        .btn-calculate {
+            background: linear-gradient(145deg, #ffc95e, #f28c1c);
             border: none;
-            border-bottom: 3px solid #bf360c;
-            border-radius: 12px;
-            padding: 0 20px;
-            color: #fff;
+            width: 100%;
+            padding: 16px;
+            border-radius: 50px;
             font-weight: 900;
-            font-size: 1rem;
+            font-size: 1.2rem;
+            color: #2d1904;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 0 #9b5a16, 0 10px 25px black, 0 0 15px rgba(255,180,80,0.6);
+            transition: 0.1s ease;
+            border: 1px solid #ffe5a1;
             cursor: pointer;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-            transition: 0.1s transform;
-        }
-
-        .btn-calc:active {
-            transform: translateY(2px);
-            border-bottom: 1px solid #bf360c;
-        }
-
-        /* TOKEN SUMMARY */
-        .summary-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-
-        .summary-item {
-            background: var(--bg-card-inner);
-            padding: 12px;
-            border-radius: 12px;
-            border-left: 4px solid var(--gold-main);
-        }
-
-        .summary-item.rem {
-            border-left-color: var(--orange-main);
-        }
-
-        .summary-item.onetime {
-            border-left-color: var(--purple-accent);
-        }
-
-        .summary-item.curr {
-            border-left-color: #4caf50;
-        }
-
-        .summary-title {
-            font-size: 0.72rem;
-            color: var(--text-muted);
-            margin-bottom: 2px;
-        }
-
-        .summary-number {
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: #fff;
-        }
-
-        /* MISSION CENTER & REWARDS */
-        .mission-item, .reward-item {
-            background: var(--bg-card-inner);
-            border: 1.5px solid #3d1e6d;
-            border-radius: 14px;
-            padding: 12px;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             position: relative;
             overflow: hidden;
         }
-
-        .mission-item.completed, .reward-item.completed {
-            border-color: #388e3c;
-            background: linear-gradient(90deg, rgba(46, 125, 50, 0.15) 0%, var(--bg-card-inner) 100%);
+        .btn-calculate::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shine 2s infinite;
+        }
+        .btn-calculate:active {
+            transform: translateY(5px);
+            box-shadow: 0 3px 0 #9b5a16, 0 6px 15px black;
         }
 
-        .mission-item.locked, .reward-item.locked {
-            opacity: 0.6;
-            filter: grayscale(0.6);
+        /* ===== TOKEN SUMMARY ===== */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
         }
 
-        .mission-info, .reward-info {
-            flex: 1;
-            padding-right: 10px;
+        .summary-item {
+            background: linear-gradient(145deg, #2b1a0d, #1a0f06);
+            border-radius: 20px;
+            padding: 14px 8px;
+            text-align: center;
+            border: 1px solid #d49a3f;
+            box-shadow: 0 5px 0 #6b471f, 0 8px 15px black, inset 0 0 10px rgba(255,180,70,0.3);
+            transition: 0.3s;
+        }
+        .summary-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #6b471f, 0 12px 25px black, 0 0 15px #ffb347;
+        }
+        .summary-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #e0b56b;
+            letter-spacing: 1px;
+        }
+        .summary-value {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #ffe8be;
+            line-height: 1.2;
+            text-shadow: 0 0 12px #ffb347;
         }
 
-        .mission-title, .reward-title {
-            font-size: 0.9rem;
-            font-weight: 800;
-            color: var(--cream-text);
-            margin-bottom: 4px;
-        }
-
-        .mission-sub {
-            font-size: 0.75rem;
-            color: var(--text-muted);
+        /* ===== MISSION CENTER ===== */
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 900;
+            background: linear-gradient(180deg, #fff1cf, #f7b843, #ff8800);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 25px 0 15px;
             display: flex;
             align-items: center;
             gap: 8px;
+            text-shadow: 0 0 15px #ffae1a;
         }
 
-        .mission-tag {
-            background: #ff7043;
-            color: #fff;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.65rem;
-            font-weight: 800;
+        .mission-card {
+            background: linear-gradient(135deg, #2a1a0c, #1f1309);
+            border-left: 8px solid #ff9d2e;
+            border-radius: 24px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 6px 0 #7a4b19, 0 12px 25px black, inset 0 0 12px rgba(255,180,70,0.3);
+            transition: 0.3s;
+        }
+        .mission-card:hover {
+            transform: translateX(4px);
+            border-left-color: #ffc44d;
+            box-shadow: 0 6px 0 #7a4b19, 0 15px 30px black, 0 0 20px #ffb347;
         }
 
-        .mission-tag.token {
-            background: #fbc02d;
-            color: #000;
-        }
-
-        .game-btn {
-            padding: 8px 14px;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            font-weight: 800;
-            border: none;
-            cursor: pointer;
-            text-align: center;
-            min-width: 86px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-        }
-
-        .btn-status-progress {
-            background: linear-gradient(180deg, #ffa726 0%, #fb8c00 100%);
-            color: #fff;
-            border-bottom: 2px solid #e65100;
-        }
-
-        .btn-status-done {
-            background: linear-gradient(180deg, #66bb6a 0%, #43a047 100%);
-            color: #fff;
-            border-bottom: 2px solid #2e7d32;
-        }
-
-        .btn-status-locked {
-            background: #423559;
-            color: #8c7fa8;
-            border-bottom: 2px solid #281e3a;
-            cursor: not-allowed;
-        }
-
-        /* CLIP LOGGER & LIST */
-        .clip-input-group {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .clip-input {
-            flex: 1;
-            background: #110724;
-            border: 1.5px solid #5a3294;
-            border-radius: 10px;
-            padding: 10px;
-            color: #fff;
-            font-size: 0.9rem;
-            font-weight: 700;
-            outline: none;
-        }
-
-        .btn-add-clip {
-            background: linear-gradient(180deg, #ab47bc 0%, #8e24aa 100%);
-            border: none;
-            border-bottom: 3px solid #6a1b9a;
-            border-radius: 10px;
-            color: #fff;
-            font-weight: 800;
-            padding: 0 16px;
-            cursor: pointer;
-        }
-
-        .clip-item {
-            background: var(--bg-card-inner);
-            border-left: 3px solid var(--purple-accent);
-            padding: 8px 12px;
-            border-radius: 8px;
-            margin-bottom: 6px;
+        .mission-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-        }
-
-        .clip-item-left {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .clip-item-views {
-            font-weight: 800;
-            color: #ffd54f;
-        }
-
-        .clip-item-calc {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        .clip-item-tokens {
-            font-weight: 900;
-            color: #81c784;
-            font-size: 1rem;
-        }
-
-        .btn-del-clip {
-            background: transparent;
-            border: none;
-            color: #e57373;
             font-weight: bold;
-            cursor: pointer;
-            padding: 4px 8px;
+            color: #ffddaa;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        .reward-pill {
+            background: linear-gradient(145deg, #6b431a, #5a3a1e);
+            padding: 5px 16px;
+            border-radius: 20px;
+            font-weight: 900;
+            border: 1px solid #fbb44c;
+            box-shadow: inset 0 0 8px rgba(255,200,80,0.5);
+        }
+        .mission-progress {
+            color: #cfab79;
             font-size: 0.9rem;
         }
+        .btn-mission {
+            background: linear-gradient(145deg, #f5a623, #d9881c);
+            border: none;
+            border-radius: 30px;
+            padding: 8px 20px;
+            font-weight: bold;
+            margin-top: 8px;
+            cursor: default;
+            box-shadow: 0 4px 0 #8a581b, 0 5px 15px black;
+            color: #161007;
+        }
+        .btn-mission.completed {
+            background: linear-gradient(145deg, #4caf50, #2e7d32);
+            color: white;
+            box-shadow: 0 4px 0 #1b5e20, 0 5px 15px black;
+        }
 
-        /* AI STRATEGY & PLANS */
-        .plan-card {
-            background: var(--bg-card-inner);
-            border: 1.5px solid #4a287c;
-            border-radius: 14px;
+        /* ===== ONE-TIME REWARDS ===== */
+        .reward-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .reward-card {
+            background: linear-gradient(145deg, #36230f, #2f1f10);
+            border-radius: 18px;
             padding: 12px;
-            margin-bottom: 10px;
+            flex: 1 0 40%;
+            border: 1px solid #d49a3f;
+            text-align: center;
+            box-shadow: 0 4px 0 #6b471f, 0 6px 15px black, inset 0 0 8px rgba(255,180,70,0.3);
+            transition: 0.2s;
+        }
+        .reward-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #6b471f, 0 10px 20px black, 0 0 15px #ffb347;
+        }
+        .reward-name {
+            font-size: 0.8rem;
+            color: #efc68c;
+            font-weight: bold;
+        }
+        .reward-value {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #ffd966;
+            text-shadow: 0 0 10px #ffaa33;
+        }
+        .reward-status {
+            font-size: 0.75rem;
+            background: #1e160c;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-top: 6px;
+            border: 1px solid #d49a3f;
+        }
+
+        /* ===== AI STRATEGY ===== */
+        .ai-strategy {
+            background: linear-gradient(145deg, #2b1a0d, #1a0f06);
+            border-radius: 28px;
+            padding: 18px;
+            border: 1px solid #d69e4a;
+            margin: 20px 0;
+            box-shadow: 0 6px 0 #6b471f, 0 10px 30px black, inset 0 0 15px rgba(255,180,70,0.3);
+        }
+
+        .strategy-card {
+            background: linear-gradient(145deg, #432b13, #35200e);
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 16px;
+            border: 2px solid #f5b84b;
+            box-shadow: 0 6px 0 #6b471f, 0 10px 20px black;
+            transition: 0.2s;
+        }
+        .strategy-card.recommended {
+            border: 3px solid #ffc44d;
+            background: linear-gradient(145deg, #5a3a1a, #4a3418);
+            box-shadow: 0 6px 0 #9b6a1f, 0 0 30px rgba(255,180,70,0.7);
             position: relative;
         }
-
-        .plan-card.recommended {
-            border-color: var(--gold-main);
-            background: linear-gradient(180deg, rgba(251, 192, 45, 0.08) 0%, var(--bg-card-inner) 100%);
+        .strategy-card.recommended::before {
+            content: "⭐ RECOMMENDED";
+            position: absolute;
+            top: -15px;
+            right: 15px;
+            background: #ffc44d;
+            color: #2d1904;
+            font-weight: 900;
+            font-size: 0.7rem;
+            padding: 5px 12px;
+            border-radius: 20px;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px black;
         }
 
-        .plan-header {
+        .strategy-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffd58c;
+        }
+        .strategy-badge {
+            background: #8b5a1e;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #fff;
+            border: 1px solid #fbb44c;
         }
 
-        .plan-title {
-            font-size: 0.95rem;
-            font-weight: 900;
-            color: var(--gold-light);
+        .strategy-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 10px 0;
         }
-
-        .plan-badge {
-            background: var(--gold-main);
-            color: #000;
-            font-size: 0.65rem;
-            font-weight: 900;
-            padding: 2px 8px;
+        .strategy-item {
+            background: #1d1309;
+            padding: 10px;
             border-radius: 12px;
+            text-align: center;
+            border: 1px solid #6b471f;
+        }
+        .strategy-item-label {
+            font-size: 0.7rem;
+            color: #c9a86a;
             text-transform: uppercase;
         }
-
-        .plan-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            margin-bottom: 8px;
-        }
-
-        .plan-stat {
-            background: #140a28;
-            padding: 6px 8px;
-            border-radius: 8px;
-        }
-
-        .plan-stat-lbl {
-            font-size: 0.68rem;
-            color: var(--text-muted);
-        }
-
-        .plan-stat-val {
-            font-size: 1rem;
-            font-weight: 800;
-            color: #fff;
-        }
-
-        .formula-box {
-            background: #100620;
-            padding: 6px 10px;
-            border-radius: 6px;
-            font-size: 0.7rem;
-            color: #ce93d8;
-            font-family: monospace;
-            border-left: 2px solid var(--purple-accent);
-        }
-
-        /* FORECAST CARD */
-        .forecast-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-
-        .forecast-metric {
-            background: var(--bg-card-inner);
-            padding: 10px;
-            border-radius: 10px;
-            border-bottom: 2px solid #5a3294;
-        }
-
-        .forecast-lbl {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        .forecast-val {
-            font-size: 1.15rem;
+        .strategy-item-value {
+            font-size: 1.4rem;
             font-weight: 900;
-            color: #fff;
+            color: #ffe9b8;
         }
 
-        /* UTILITY BUTTONS */
-        .btn-group-util {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
-            margin-top: 14px;
-        }
-
-        .btn-util {
-            background: #2b184a;
-            border: 1px solid #5c3599;
-            color: var(--cream-text);
+        .strategy-formula {
+            background: #1a0f06;
             padding: 10px;
             border-radius: 10px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            cursor: pointer;
-            text-align: center;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #d4b892;
+            border-left: 4px solid #f7b843;
         }
-
-        .btn-util:hover {
-            background: #3c2266;
-        }
-
-        .btn-reset {
-            color: #ff8a80;
-            border-color: #8c2b2b;
-        }
-
-        .explainer-text {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            line-height: 1.4;
+        .strategy-explanation {
+            font-size: 0.85rem;
+            color: #e0c9a8;
             margin-top: 8px;
-            padding: 8px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 8px;
+        }
+
+        .strategy-analysis {
+            margin-top: 10px;
+            padding: 10px;
+            background: #2b1a0d;
+            border-radius: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: #f0d9b0;
+        }
+        .analysis-tag {
+            background: #543b1e;
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid #e6a53e;
+            white-space: nowrap;
+        }
+
+        .forecast-box {
+            background: #1d1309;
+            border-radius: 24px;
+            padding: 18px;
+            border: 1px solid #b17e39;
+            box-shadow: 0 5px 0 #6b471f, 0 10px 25px black, inset 0 0 15px rgba(255,180,70,0.2);
+        }
+        .forecast-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 1.1rem;
+            color: #fbeed3;
+        }
+
+        hr {
+            border: 0.5px solid #634e2c;
+            margin: 16px 0;
+        }
+        .tiny-note {
+            font-size: 0.75rem;
+            color: #bba276;
+            text-align: center;
         }
     </style>
 </head>
 <body>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
 
-<div class="container">
-    <!-- HEADER -->
-    <header class="header">
-        <div class="header-title">✨ Creator Next Gen ✨</div>
-        <div class="token-badge">
-            <span class="icon">🪙</span>
-            <span class="val" id="headerCurrentToken">0</span>
-        </div>
-    </header>
+    <div class="app-container">
+        <div class="content-layer">
+            <!-- HEADER -->
+            <div class="header-card">
+                <span class="header-title">✨ Creator Next Gen ✨</span>
+                <div class="token-badge" id="headerTokenDisplay">0 🪙</div>
+            </div>
 
-    <!-- CREATOR STATUS CARD -->
-    <section class="game-card">
-        <div class="game-card-header">
-            <span>Creator Status</span>
-            <span id="creatorTier">NOVICE TIER</span>
-        </div>
-        <div class="status-grid">
-            <div class="status-col">
-                <div class="status-label">Level</div>
-                <div class="status-value" id="dispLevel">Lv. 1</div>
+            <!-- CREATOR STATUS CARD -->
+            <div class="status-card">
+                <div class="creator-level">
+                    <span>👑 Level: <span id="levelDisplay">1</span></span>
+                    <span>⚡ Point</span>
+                </div>
+                <div class="point-display">
+                    <span>Current: <strong id="currentPointDisplay">0</strong></span>
+                    <span>Target: <strong id="targetPointDisplay">—</strong></span>
+                </div>
             </div>
-            <div class="status-col">
-                <div class="status-label">Current Point</div>
-                <div class="status-value gold" id="dispCurrentPoint">0</div>
-            </div>
-            <div class="status-col">
-                <div class="status-label">Target Point</div>
-                <div class="status-value" id="dispTargetPoint">1,000</div>
-            </div>
-        </div>
-    </section>
 
-    <!-- TARGET SECTION -->
-    <section class="game-card">
-        <div class="game-card-header">Target Configuration</div>
-        <div class="target-box">
-            <input type="number" id="targetPointInput" class="target-input" placeholder="ใส่ Point เช่น 1000" value="1000" min="0" step="50">
-            <button class="btn-calc" onclick="calculateTarget()">คำนวณ</button>
-        </div>
-        <div class="explainer-text">
-            *คำนวณ Token จากตารางแปลง Point: 100:80, 300:210, 500:360, 1000:720, 1500:1090, 2000:1430
-        </div>
-    </section>
-
-    <!-- TOKEN SUMMARY -->
-    <section class="game-card">
-        <div class="game-card-header">Token Summary</div>
-        <div class="summary-grid">
-            <div class="summary-item">
-                <div class="summary-title">Required Token</div>
-                <div class="summary-number" id="dispRequiredToken">720</div>
+            <!-- TARGET SECTION -->
+            <div class="target-section">
+                <input type="number" id="targetPointInput" class="target-input" placeholder="ใส่ Point เช่น 1000" min="0" value="1000">
+                <button class="btn-calculate" id="calculateBtn">⚡ คำนวณ</button>
             </div>
-            <div class="summary-item curr">
-                <div class="summary-title">Current Token</div>
-                <div class="summary-number" id="dispCurrentToken">0</div>
-            </div>
-            <div class="summary-item onetime">
-                <div class="summary-title">One-Time Rewards</div>
-                <div class="summary-number" id="dispOneTimeProgress">0 / 240</div>
-            </div>
-            <div class="summary-item rem">
-                <div class="summary-title">Remaining Token</div>
-                <div class="summary-number" id="dispRemainingToken">720</div>
-            </div>
-        </div>
-    </section>
 
-    <!-- MISSION CENTER (AI GENERATED) -->
-    <section class="game-card">
-        <div class="game-card-header">
-            <span>Mission Center</span>
-            <span style="font-size: 0.7rem; color: #81c784;">AI Auto-Tracking</span>
-        </div>
-        <div id="aiMissionList">
-            <!-- Dynamically generated AI Missions -->
-        </div>
-    </section>
-
-    <!-- CLIP MANAGER & LOGGER -->
-    <section class="game-card">
-        <div class="game-card-header">
-            <span>Creator Clips Log</span>
-            <span id="clipCountBadge">0 Clips</span>
-        </div>
-        <div class="clip-input-group">
-            <input type="number" id="clipViewInput" class="clip-input" placeholder="จำนวน View ต่อคลิป (เช่น 15000)" min="0">
-            <button class="btn-add-clip" onclick="addNewClip()">บันทึกคลิป</button>
-        </div>
-        <div id="clipLogList">
-            <!-- Recorded Clips -->
-        </div>
-    </section>
-
-    <!-- ONE-TIME REWARDS (ACHIEVEMENT + SEASON) -->
-    <section class="game-card">
-        <div class="game-card-header">
-            <span>One-Time Rewards</span>
-            <span id="oneTimeCounterBadge">0 / 240 Token</span>
-        </div>
-        <div id="oneTimeList">
-            <!-- One Time Reward Cards -->
-        </div>
-    </section>
-
-    <!-- AI STRATEGY & BEST PATH -->
-    <section class="game-card">
-        <div class="game-card-header">
-            <span>AI Strategy & Best Path</span>
-            <span style="color: #ffd54f;">⚡ Real-time Path</span>
-        </div>
-        <div id="strategyPlansContainer">
-            <!-- Strategy Plans Generated via Math -->
-        </div>
-    </section>
-
-    <!-- FORECAST ENGINE -->
-    <section class="game-card">
-        <div class="game-card-header">Forecast Engine</div>
-        <div class="forecast-grid">
-            <div class="forecast-metric">
-                <div class="forecast-lbl">Current Token</div>
-                <div class="forecast-val" id="foreCurrentToken">0</div>
+            <!-- TOKEN SUMMARY -->
+            <div class="summary-grid">
+                <div class="summary-item"><span class="summary-label">Required Token</span><div class="summary-value" id="requiredTokenVal">720</div></div>
+                <div class="summary-item"><span class="summary-label">Current Token</span><div class="summary-value" id="currentTokenVal">0</div></div>
+                <div class="summary-item"><span class="summary-label">One-Time Progress</span><div class="summary-value" id="oneTimeProgressVal">0/240</div></div>
+                <div class="summary-item"><span class="summary-label">Remaining Token</span><div class="summary-value" id="remainingTokenVal">720</div></div>
             </div>
-            <div class="forecast-metric">
-                <div class="forecast-lbl">Remaining Token</div>
-                <div class="forecast-val" id="foreRemainingToken">720</div>
-            </div>
-            <div class="forecast-metric">
-                <div class="forecast-lbl">Remaining Clips (Balanced)</div>
-                <div class="forecast-val" id="foreRemainingClips">0</div>
-            </div>
-            <div class="forecast-metric">
-                <div class="forecast-lbl">Remaining Views Needed</div>
-                <div class="forecast-val" id="foreRemainingViews">0</div>
-            </div>
-        </div>
-        <div class="explainer-text" id="forecastStatusText">
-            สถานะ: กำลังวิเคราะห์ข้อมูลการสร้างคอนเทนต์...
-        </div>
-    </section>
 
-    <!-- UTILITIES -->
-    <div class="btn-group-util">
-        <button class="btn-util" onclick="exportJSON()">Export JSON</button>
-        <button class="btn-util" onclick="exportCSV()">Export CSV</button>
-        <button class="btn-util btn-reset" onclick="resetAllData()">Reset All</button>
-    </div>
-</div>
+            <!-- MISSION CENTER -->
+            <div class="section-title">🎯 MISSION CENTER</div>
+            <div id="missionContainer"></div>
 
-<script>
-/**
- * CREATOR NEXT GEN - PRODUCTION ENGINE CORE
- * Mathematic
+            <!-- ONE-TIME REWARDS -->
+            <div class="section-title">🏆 ONE-TIME REWARDS (Auto-unlock)</div>
+            <div class="reward-list" id="rewardListContainer"></div>
+
+            <!-- AI STRATEGY - BEST PATH ENGINE -->
+            <div class="section-title">🧠 AI STRATEGY</div>
+            <div class="ai-strategy" id="strategyContainer"></div>
+
+            <!-- FORECAST -->
+            <div class="section-title">📈 FORECAST</div>
+            <div class="forecast-box" id="forecastContainer"></div>
+            <hr>
+            <div cla
